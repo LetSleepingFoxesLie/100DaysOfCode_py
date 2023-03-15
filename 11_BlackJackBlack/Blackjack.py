@@ -8,8 +8,8 @@ def blackjack_game():
     #     = [A,  2, 3, 4, 5, 6, 7, 8, 9, 10, J,  Q,  K ]
     cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
     hand_player, hand_dealer = draw_start(cards), draw_start(cards)
-    print(hand_player)
-    print(hand_dealer)
+    print(f"P: {hand_player} -> {calculate_hand(hand_player)}")
+    print(f"D: {hand_dealer} -> {calculate_hand(hand_dealer)}")
 
 def draw_card(cards):
     return cards[random.randint(0, len(cards) - 1)]
@@ -31,5 +31,16 @@ def card_prints(hand):
         return_string += f"{card}, "
     return_string += "]"
     return return_string
+
+def calculate_hand(hand):
+    if len(hand) == 0:
+        return "Error: hand is empty"
+    
+    tally = 0
+    for card in hand:
+        tally += int(card)
+    
+    return tally    
+        
 
 blackjack_game()
