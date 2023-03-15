@@ -1,46 +1,151 @@
 import random
+import os
 
 def blackjack_loop():
     while(True):
+        os.system("cls||clear")
         blackjack_game()
+        user_input = input("Do you want to play another game? (y/n) ")
+        if user_input.lower() == "y":
+            continue
+        else:
+            break
         
 def blackjack_game():
     #     = [A,  2, 3, 4, 5, 6, 7, 8, 9, 10, J,  Q,  K ]
     cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
     hand_player, hand_dealer = draw_start(cards), draw_start(cards)
+    
     print(f"P: {hand_player} -> {calculate_hand(hand_player)}")
+    print(f"D: {print_veiled_hand(hand_dealer)} -> ?")
+    
+    # If player outright gets a blackjack, he wins:
+    if calculate_hand(hand_dealer) == 21:
+        print("Dealer wins!")
+        return False
+    
+    if calculate_hand(hand_player) == 21:
+        print("Player wins!")
+        return True
+    
+    # Otherwise, make him play the game:
+    while(True):
+        if player_wants_another_card():
+            hand_player.append(generate_card(cards))
+            hand_dealer.append(generate_card(cards))
+            
+            print(f"P: {hand_player} -> {calculate_hand(hand_player)}")
+            print(f"D: {print_veiled_hand(hand_dealer)} -> ?")
+            
+            # Then check his score with every drawn card
+            if calculate_hand(hand_player) == 21:
+                print("Player wins!")
+                print(f"D: {hand_dealer} -> {calculate_hand(hand_dealer)}")
+                return True
+            
+            if calculate_hand(hand_player) > 21:
+                print("Player loses!")
+                print(f"D: {hand_dealer} -> {calculate_hand(hand_dealer)}")
+                return False
+            
+        else:
+            # Let the computer play by breaking this while
+            break
+    
+    while(calculate_hand(hand_dealer) < 17):
+        hand_dealer.append(generate_card(cards))
+        print(f"D: {hand_dealer} -> {calculate_hand(hand_dealer)}")
+        
+        if calculate_hand(hand_dealer) == 21:
+            print("Dealer wins!")
+            return False
+        
+        if calculate_hand(hand_dealer) > 21:
+            print("Player wins!")
+            return True
+    
+    score_player = calculate_hand(hand_player)
+    score_dealer = calculate_hand(hand_dealer)
     print(f"D: {hand_dealer} -> {calculate_hand(hand_dealer)}")
+    
+    if is_bust(hand_dealer):
+        print("Player wins!")
+        return True
 
-def draw_card(cards):
+    if score_player == score_dealer:
+        print("It's a draw!")
+        return False
+    elif score_player > score_dealer:
+        print("Player wins!")
+        return True
+    else:
+        print("Player loses!")
+        return False
+
+def generate_card(cards):
     return cards[random.randint(0, len(cards) - 1)]
+
+def player_wants_another_card():
+    user_input = input("Do you want another card? (y/n) ")
+    if user_input.lower() == "y":
+        return True
+    elif user_input.lower() == "n":
+        return False
+    else:
+        print("Input error, assuming 'n'")
+        return False
+    
 
 def draw_start(cards):
     drawn_cards = []
     for card in range(2):
-        drawn_cards.append(
-            draw_card(cards)
-        )
+        drawn_cards.append(generate_card(cards))
     return drawn_cards
 
-def card_prints(hand):
-    if len(hand) == 0:
-        return "Error: hand is empty"
-    
+def print_veiled_hand(hand):
     return_string = "["
+    index = 0
     for card in hand:
-        return_string += f"{card}, "
+        if index == 0:
+            return_string += f"{card}, "
+        else:
+            return_string += "_, "
+        index += 1
+    return_string = return_string[:-2]
     return_string += "]"
     return return_string
+        
+
+def is_winning_hand(hand):
+    score = calculate_hand(hand)
+    if score == 21:
+        return True
+    else:
+        return False
+
+def is_bust(hand):
+    score = calculate_hand(hand)
+    if score > 21:
+        return True
+    else:
+        return False
 
 def calculate_hand(hand):
     if len(hand) == 0:
         return "Error: hand is empty"
     
-    tally = 0
+    tally, ace_counter = 0, 0
+    
     for card in hand:
         tally += int(card)
-    
-    return tally    
+        if int(card) == 11:
+            ace_counter += 1
+        
+    for ace in range(ace_counter):
+        if tally > 21:
+            tally -= 10
+            
+    return tally
         
 
-blackjack_game()
+blackjack_loop()
