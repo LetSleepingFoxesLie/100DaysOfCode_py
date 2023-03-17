@@ -147,6 +147,7 @@ int main(){
 
                     if(pay < espresso.cost){
                         printf("- Sorry, you are very pobre, and you can't afford %.2f for a(n) %s\n", espresso.cost, user_input);
+                        free(user_input);
                         continue;
                     }
 
@@ -161,6 +162,7 @@ int main(){
 
                     if(pay < latte.cost){
                         printf("- Sorry, you are very pobre, and you can't afford %.2f for a(n) %s\n", latte.cost, user_input);
+                        free(user_input);
                         continue;
                     }
 
@@ -175,13 +177,17 @@ int main(){
 
                     if(pay < cappuccino.cost){
                         printf("- Sorry, you are very pobre, and you can't afford %.2f for a(n) %s\n", cappuccino.cost, user_input);
+                        free(user_input);
                         continue;
                     }
 
                     brew_drink(machine, cappuccino, pay, user_input);
                 }
-            }            
+            }
+        free(user_input);
         }
     }
+
+    free(machine);
     return 0;
 }
