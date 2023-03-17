@@ -105,7 +105,7 @@ def request_coins():
                 continue
             break
     
-    print((f"+ Your money: ${tally:.2f}"))
+    print(f"+ Your money: ${tally:.2f}")
     return tally
     
 # Parses the user's input. Kind of, I hate parsing stuff.
