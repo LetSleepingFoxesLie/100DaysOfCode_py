@@ -36,7 +36,7 @@ resources = {
 def get_prompt():
     allowed_commands = ["off", "report"]
     
-    while(True):
+    while True:
         prompt = input("What would you like? (espresso, latte, or cappuccino): ")
         
         if prompt not in MENU and prompt not in allowed_commands:
