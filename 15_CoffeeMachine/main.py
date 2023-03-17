@@ -92,7 +92,7 @@ def request_coins():
     
     # Some values to make the code better to read down below. I hope so.
     coin_values = [0.25, 0.10, 0.05, 0.01]
-    coin_names = ["quarters", "dimes", "nickles", "pennies"]
+    coin_names = ["quarters", "dimes", "nickels", "pennies"]
     tally = 0
     
     # Adding some input validation.
