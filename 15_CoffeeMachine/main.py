@@ -35,6 +35,7 @@ resources = {
 # Prompts the user
 def get_prompt():
     allowed_commands = ["off", "report"]
+    
     while(True):
         prompt = input("What would you like? (espresso, latte, or cappuccino): ")
         if prompt not in MENU and prompt not in allowed_commands:
@@ -42,6 +43,7 @@ def get_prompt():
             continue
         else:
             break
+
     return prompt
 
 # Print a report with the machine's resources
