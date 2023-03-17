@@ -66,7 +66,7 @@ def can_make_brew(machine, drink):
         
     if machine['coffee'] < MENU[drink]['ingredients']['coffee']:
         print("- Sorry, there is not enough coffee!")
-        has_resource = False
+        has_resources = False
     
     return has_resources
 
@@ -105,7 +105,6 @@ def request_coins():
     print((f"+ Your money: ${tally:.2f}"))
     return tally
     
-
 # Parses the user's input. Kind of, I hate parsing stuff.
 def coffee_machine_loop():
     machine = resources
