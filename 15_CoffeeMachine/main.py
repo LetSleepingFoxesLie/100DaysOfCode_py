@@ -38,6 +38,7 @@ def get_prompt():
     
     while(True):
         prompt = input("What would you like? (espresso, latte, or cappuccino): ")
+        
         if prompt not in MENU and prompt not in allowed_commands:
             print("- Sorry, I didn't understand.")
             continue
