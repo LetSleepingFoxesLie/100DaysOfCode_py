@@ -34,7 +34,14 @@ resources = {
 
 # Prompts the user
 def get_prompt():
-    prompt = input("What would you like? (espresso, latte, or cappuccino): ")
+    allowed_commands = ["off", "report"]
+    while(True):
+        prompt = input("What would you like? (espresso, latte, or cappuccino): ")
+        if prompt not in MENU and prompt not in allowed_commands:
+            print("- Sorry, I didn't understand.")
+            continue
+        else:
+            break
     return prompt
 
 # Print a report with the machine's resources
@@ -45,12 +52,8 @@ def print_report(machine):
     print(f"- Coffee: {machine['coffee']}g")
     print(f"- Money: ${machine['money']:.2f}")
 
-def can_make_brew(machine, drink, money):
-    
-    if money < MENU[drink]['cost']:
-        print(f"- Sorry, that's not enough money for a {drink} (${MENU[drink]['cost']:.2f}). Refunded all coins.")
-        return False
-    
+# Checks whether the machine has enough resources to make a brew
+def can_make_brew(machine, drink):
     has_resources = True
 
     if machine['water'] < MENU[drink]['ingredients']['water']:
@@ -67,6 +70,7 @@ def can_make_brew(machine, drink, money):
     
     return has_resources
 
+# Actually makes the brew! And gives some change, too.
 def make_brew(machine, drink, money):
     machine['water'] -= MENU[drink]['ingredients']['water']
     machine['milk'] -= MENU[drink]['ingredients']['milk']
@@ -80,25 +84,36 @@ def make_brew(machine, drink, money):
     machine['money'] += MENU[drink]['cost']
     return machine
 
+# Collects the user's coins
 def request_coins():
-    # Quarters, dimes, nickles, pennies
+    
+    # Some values to make the code better to read down below. I hope so.
     coin_values = [0.25, 0.10, 0.05, 0.01]
     coin_names = ["quarters", "dimes", "nickles", "pennies"]
     tally = 0
     
+    # Adding some input validation.
     for i in range(len(coin_values)):
-        tally += int(input(f">> How many {coin_names[i]}? ")) * coin_values[i]
+        while True:
+            try:
+                tally += int(input(f">> How many {coin_names[i]}? ")) * coin_values[i]
+            except ValueError:
+                print(">> Please, input a number.")
+                continue
+            break
     
     print((f"+ Your money: ${tally:.2f}"))
     return tally
     
 
-# Parses the user's input
+# Parses the user's input. Kind of, I hate parsing stuff.
 def coffee_machine_loop():
     machine = resources
     
-    while(True):    
+    # As the machine will continually run, we need a loop
+    while True:    
         user_input = get_prompt().lower()
+        
         if user_input == "off":
             print("+ Turning coffee machine off")
             break
@@ -106,11 +121,13 @@ def coffee_machine_loop():
             print_report(machine)
             continue
         else:
-            coins = request_coins()
-            if can_make_brew(machine, user_input, coins):
-                print(f"+ Success! Making {user_input}")
-                machine = make_brew(machine, user_input, coins)
-            else:
-                continue
+            
+            if can_make_brew(machine, user_input):
+                coins = request_coins()
+                if coins < MENU[user_input]['cost']:
+                    print(f"- Sorry, that's not enough money for a {user_input} (${MENU[user_input]['cost']:.2f}). Refunded all coins.")
+                    continue
+                else:
+                    machine = make_brew(machine, user_input, coins)
 
 coffee_machine_loop()
