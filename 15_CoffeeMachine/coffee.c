@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+// This is for you. You know who you are.
+
 typedef struct Brew{
     int water;
     int milk;
@@ -184,10 +186,11 @@ int main(){
                     brew_drink(machine, cappuccino, pay, user_input);
                 }
             }
+        // Hopefully in the correct place
         free(user_input);
         }
     }
-
+    // Hopefully in the correct place as well
     free(machine);
     return 0;
 }
