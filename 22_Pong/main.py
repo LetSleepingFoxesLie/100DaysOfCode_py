@@ -16,13 +16,18 @@ def main():
     
     # Add listeners
     screen.listen()
-    screen.onkey(fun = paddle_player_a.move_paddle_down, key = "s")
-    screen.onkey(fun = paddle_player_a.move_paddle_up, key = "w")
+    
+    # Paddle A
+    screen.onkeypress(fun = paddle_player_a.press_paddle_down, key = "s")
+    screen.onkeypress(fun = paddle_player_a.press_paddle_up, key = "w")
+    
+    screen.onkeyrelease(fun = paddle_player_a.release_paddle_up, key = "s")
+    screen.onkeyrelease(fun = paddle_player_a.release_paddle_up, key = "w")
     
     is_game_running = True
     while is_game_running:
         screen.update()
-        sleep(0.1)
+        sleep(0.02)
     
     screen.exitonclick()
     # game loop
