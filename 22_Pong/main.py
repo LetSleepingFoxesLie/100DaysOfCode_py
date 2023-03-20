@@ -1,4 +1,5 @@
 from turtle import Turtle, Screen
+from time import sleep
 
 from paddle import Paddle
 
@@ -9,8 +10,19 @@ def main():
     screen = Screen()
     setup_screen(screen)
     
+    # Create paddles
     paddle_player_a = Paddle()
     screen.update()
+    
+    # Add listeners
+    screen.listen()
+    screen.onkey(fun = paddle_player_a.move_paddle_down, key = "s")
+    screen.onkey(fun = paddle_player_a.move_paddle_up, key = "w")
+    
+    is_game_running = True
+    while is_game_running:
+        screen.update()
+        sleep(0.1)
     
     screen.exitonclick()
     # game loop

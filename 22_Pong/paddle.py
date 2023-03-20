@@ -20,10 +20,11 @@ class Paddle(Turtle):
         
         print("!")
         
-        self.shapesize(stretch_len = 1.0, stretch_wid = 15.0)
+        self.shapesize(stretch_len = 1.0, stretch_wid = 9.0)
         self.setpos(-WINDOW_WIDTH * 0.5 + OFFSET, 0)
 
-    # Add safeguards to avoid going too high up        
+    # Add safeguards to avoid going too high up
+    # But fucking how, though
     def move_paddle_up(self):
         self.sety(self.ycor() + MOVE_STEP)
         
