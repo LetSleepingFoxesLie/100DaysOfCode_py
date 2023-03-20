@@ -5,8 +5,8 @@ from scoreboard import Scoreboard
 from random import randint
 from time import sleep
 
-BALL_RADIUS = 10 # supposedly 10
-BALL_SPEED = 10
+BALL_RADIUS = 12 # supposedly 10
+BALL_SPEED = 9
 
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 640
@@ -17,7 +17,9 @@ class Ball(Turtle):
         
         super().__init__()
         
-        self.angle = randint(0, 360)
+        self.angle = randint(110, 160)
+        if randint(0, 1) % 2 == 0:
+            self.angle += 180
         self.ball_set_angle(self.angle)
         
         self.penup()
@@ -32,7 +34,9 @@ class Ball(Turtle):
     # Regenerate the ball
     def regenerate_ball(self) -> None:
         self.setpos(0, 0)
-        self.seth(randint(0, 360))
+        self.angle = randint(110, 160)
+        if randint(0, 1) % 2 == 0:
+            self.angle += 180
     
     # Ball set angle
     def ball_set_angle(self, angle: int) -> None:
@@ -42,7 +46,8 @@ class Ball(Turtle):
         cy = self.ycor()
         
         # Check for upper boundary...
-        if cy + BALL_RADIUS >= WINDOW_HEIGHT * 0.5 or cy - BALL_RADIUS <= -WINDOW_HEIGHT * 0.5:
+        if cy + BALL_RADIUS > WINDOW_HEIGHT * 0.5 or cy - BALL_RADIUS < -WINDOW_HEIGHT * 0.5:
+            print(f"Top-bottom: {cy}")
             self.angle = 360 - self.angle
             self.ball_set_angle(self.angle)
     
@@ -56,12 +61,14 @@ class Ball(Turtle):
         # Testing for left paddle
         if cx < 0:
             if cx <= -WINDOW_WIDTH * 0.5 + PADDLE_OFFSET and (cy >= paddle.ycor() - PADDLE_RANGE and cy <= paddle.ycor() + PADDLE_RANGE):
+                print("Left paddle")
                 self.angle = 180 - self.angle
                 self.ball_set_angle(self.angle)
             
         # Testing for right paddle
         if cx > 0:
             if cx >= WINDOW_WIDTH * 0.5 - PADDLE_OFFSET and (cy >= paddle.ycor() - PADDLE_RANGE and cy <= paddle.ycor() + PADDLE_RANGE):
+                print("Right paddle")
                 self.angle = 180 - self.angle
                 self.ball_set_angle(self.angle)
     
