@@ -41,6 +41,7 @@ class Ball(Turtle):
     # Ball set angle
     def ball_set_angle(self, angle: int) -> None:
         self.seth(angle)
+        self.ball_movement()
         
     def bounce_top_bottom(self) -> None:
         cy = self.ycor()
@@ -59,14 +60,14 @@ class Ball(Turtle):
         cy = self.ycor()
         
         # Testing for left paddle
-        if cx < 0:
+        if paddle.xcor() < 0:
             if cx <= -WINDOW_WIDTH * 0.5 + PADDLE_OFFSET and (cy >= paddle.ycor() - PADDLE_RANGE and cy <= paddle.ycor() + PADDLE_RANGE):
                 print("Left paddle")
                 self.angle = 180 - self.angle
                 self.ball_set_angle(self.angle)
             
         # Testing for right paddle
-        if cx > 0:
+        if paddle.xcor() > 0:
             if cx >= WINDOW_WIDTH * 0.5 - PADDLE_OFFSET and (cy >= paddle.ycor() - PADDLE_RANGE and cy <= paddle.ycor() + PADDLE_RANGE):
                 print("Right paddle")
                 self.angle = 180 - self.angle
