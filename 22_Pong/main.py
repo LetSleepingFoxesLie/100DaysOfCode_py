@@ -1,5 +1,6 @@
 from turtle import Turtle, Screen
 from time import sleep
+from random import randint
 
 from paddle import Paddle
 from ball import Ball
@@ -67,7 +68,7 @@ def main():
         sleep(0.02)
     
     screen.exitonclick()
-    
+
     # game loop
     pass
 

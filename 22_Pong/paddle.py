@@ -3,11 +3,11 @@ from turtle import Turtle
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 640
 OFFSET = 20
-MOVE_STEP = 4
+MOVE_STEP = 25
 
 # Upper and lower bound to limit the paddle's movement in some way.
-UPPER_BOUND = 230
-LOWER_BOUND = -224
+UPPER_BOUND = 251
+LOWER_BOUND = -226
 
 class Paddle(Turtle):
     

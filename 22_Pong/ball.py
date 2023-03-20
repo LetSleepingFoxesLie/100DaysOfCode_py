@@ -17,10 +17,13 @@ class Ball(Turtle):
         
         super().__init__()
         
-        self.angle = randint(110, 160)
+        self.sx = randint(2, 7)
+        self.sy = randint(2, 4)
+        
         if randint(0, 1) % 2 == 0:
-            self.angle += 180
-        self.ball_set_angle(self.angle)
+            self.sx *= -1
+        if randint(0, 1) % 2 == 0:
+            self.sy *= -1
         
         self.penup()
         self.shape("circle")
@@ -29,19 +32,19 @@ class Ball(Turtle):
         
     # Ball movement
     def ball_movement(self) -> None:
-        self.forward(BALL_SPEED)
+        self.setx(self.xcor() + self.sx)
+        self.sety(self.ycor() + self.sy)
         
     # Regenerate the ball
     def regenerate_ball(self) -> None:
         self.setpos(0, 0)
-        self.angle = randint(110, 160)
+        self.sx = randint(2, 7)
+        self.sy = randint(2, 4)
+        
         if randint(0, 1) % 2 == 0:
-            self.angle += 180
-    
-    # Ball set angle
-    def ball_set_angle(self, angle: int) -> None:
-        self.seth(angle)
-        self.ball_movement()
+            self.sx *= -1
+        if randint(0, 1) % 2 == 0:
+            self.sy *= -1
         
     def bounce_top_bottom(self) -> None:
         cy = self.ycor()
@@ -49,8 +52,8 @@ class Ball(Turtle):
         # Check for upper boundary...
         if cy + BALL_RADIUS > WINDOW_HEIGHT * 0.5 or cy - BALL_RADIUS < -WINDOW_HEIGHT * 0.5:
             print(f"Top-bottom: {cy}")
-            self.angle = 360 - self.angle
-            self.ball_set_angle(self.angle)
+            self.sy *= -1
+            self.ball_movement()
     
     def bounce_paddle(self, paddle: Paddle) -> None:
         PADDLE_OFFSET = 40
@@ -63,16 +66,16 @@ class Ball(Turtle):
         if paddle.xcor() < 0:
             if cx <= -WINDOW_WIDTH * 0.5 + PADDLE_OFFSET and (cy >= paddle.ycor() - PADDLE_RANGE and cy <= paddle.ycor() + PADDLE_RANGE):
                 print("Left paddle")
-                self.angle = 180 - self.angle
-                self.ball_set_angle(self.angle)
+                self.sx *= -1
             
         # Testing for right paddle
         if paddle.xcor() > 0:
             if cx >= WINDOW_WIDTH * 0.5 - PADDLE_OFFSET and (cy >= paddle.ycor() - PADDLE_RANGE and cy <= paddle.ycor() + PADDLE_RANGE):
                 print("Right paddle")
-                self.angle = 180 - self.angle
-                self.ball_set_angle(self.angle)
+                self.sx *= -1
     
+        self.ball_movement()
+            
     def is_out_of_bounds(self, scoreboard_left: Scoreboard, scoreboard_right: Scoreboard):
         cx = self.xcor()
         
