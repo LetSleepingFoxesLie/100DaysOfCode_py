@@ -1,6 +1,9 @@
 from turtle import Turtle
 from paddle import Paddle
+from scoreboard import Scoreboard
+
 from random import randint
+from time import sleep
 
 BALL_RADIUS = 10 # supposedly 10
 BALL_SPEED = 10
@@ -25,6 +28,11 @@ class Ball(Turtle):
     # Ball movement
     def ball_movement(self) -> None:
         self.forward(BALL_SPEED)
+        
+    # Regenerate the ball
+    def regenerate_ball(self) -> None:
+        self.setpos(0, 0)
+        self.seth(randint(0, 360))
     
     # Ball set angle
     def ball_set_angle(self, angle: int) -> None:
@@ -55,7 +63,16 @@ class Ball(Turtle):
             self.angle = 180 - self.angle
             self.ball_set_angle(self.angle)
     
-    def is_out_of_bounds(self):
+    def is_out_of_bounds(self, scoreboard_left: Scoreboard, scoreboard_right: Scoreboard):
         cx = self.xcor()
-        cy = self.ycor()
-        pass
+        
+        if cx <= -WINDOW_WIDTH * 0.5:
+            scoreboard_right.add_score()
+            self.regenerate_ball()
+            sleep(1)
+            
+        if cx >= WINDOW_WIDTH * 0.5:
+            scoreboard_left.add_score()
+            self.regenerate_ball()
+            sleep(1)
+            

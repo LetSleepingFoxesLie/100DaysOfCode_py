@@ -3,6 +3,7 @@ from time import sleep
 
 from paddle import Paddle
 from ball import Ball
+from scoreboard import Scoreboard
 
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 640
@@ -25,6 +26,11 @@ def main():
     
     # Create ball
     ball = Ball()
+    
+    # Create scoreboards
+    scoreboard_left = Scoreboard((-50, 250))
+    scoreboard_right = Scoreboard((50, 250))
+    
     
     # Add listeners
     screen.listen()
@@ -52,11 +58,16 @@ def main():
         ball.bounce_paddle(paddle_player_a)
         ball.bounce_paddle(paddle_player_b)
         
+        # Detect when there's a point
+        ball.is_out_of_bounds(scoreboard_left, scoreboard_right)
+        
         # Loop ball movement
         ball.ball_movement()
+        
         sleep(0.02)
     
     screen.exitonclick()
+    
     # game loop
     pass
 
