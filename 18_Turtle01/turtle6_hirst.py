@@ -1,5 +1,4 @@
 import colorgram
-from colorgram import Color
 from turtle import Turtle, Screen
 from random import choice
 
