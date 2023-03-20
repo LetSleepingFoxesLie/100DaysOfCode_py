@@ -1,18 +1,24 @@
 from turtle import Turtle, Screen
 from time import sleep
 
-from paddle import Paddle
+from paddle_left import PaddleLeft
+from ball import Ball
 
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 640
 
 def main():
+    
+    # Screen initialization
     screen = Screen()
     setup_screen(screen)
     
     # Create paddles
-    paddle_player_a = Paddle()
+    paddle_player_a = PaddleLeft()
     screen.update()
+    
+    # Create ball
+    ball = Ball()
     
     # Add listeners
     screen.listen()

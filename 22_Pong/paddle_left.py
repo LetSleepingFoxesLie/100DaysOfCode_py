@@ -5,13 +5,11 @@ WINDOW_HEIGHT = 640
 OFFSET = 20
 MOVE_STEP = 12
 
-PADDLE_WIDTH = 20 # ?
-PADDLE_HEIGHT = 180 # ?
-
+# Upper and lower bound to limit the paddle's movement in some way.
 UPPER_BOUND = 230
 LOWER_BOUND = -224
 
-class Paddle(Turtle):
+class PaddleLeft(Turtle):
     
     # Initialization
     def __init__(self) -> None:
@@ -19,6 +17,7 @@ class Paddle(Turtle):
         # Inheritance
         super().__init__()
         
+        # Setting the paddles up
         self.shape("square")
         self.color("white")
         self.penup()
@@ -29,6 +28,9 @@ class Paddle(Turtle):
 
     # Add safeguards to avoid going too high up
     # But fucking how, though
+    
+    # Ok, so managed to limit the movement of the paddles through spaghetti code.
+    # Here's hoping it will never blow up (it will blow up)
     
     def press_paddle_up(self):
         current_y = self.ycor()
