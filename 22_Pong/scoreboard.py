@@ -16,5 +16,8 @@ class Scoreboard(Turtle):
         
     def add_score(self):
         self.score += 1
+        self.clear()
+        self.write(arg = self.score, move = False, align = "center", font = FONT_SETTINGS)
+
     
     pass

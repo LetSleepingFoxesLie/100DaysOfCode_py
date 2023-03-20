@@ -54,14 +54,16 @@ class Ball(Turtle):
         cy = self.ycor()
         
         # Testing for left paddle
-        if cx <= -WINDOW_WIDTH * 0.5 + PADDLE_OFFSET and (cy >= paddle.ycor() - PADDLE_RANGE and cy <= paddle.ycor() + PADDLE_RANGE):
-            self.angle = 180 - self.angle
-            self.ball_set_angle(self.angle)
-        
+        if cx < 0:
+            if cx <= -WINDOW_WIDTH * 0.5 + PADDLE_OFFSET and (cy >= paddle.ycor() - PADDLE_RANGE and cy <= paddle.ycor() + PADDLE_RANGE):
+                self.angle = 180 - self.angle
+                self.ball_set_angle(self.angle)
+            
         # Testing for right paddle
-        if cx >= WINDOW_WIDTH * 0.5 - PADDLE_OFFSET and (cy >= paddle.ycor() - PADDLE_RANGE and cy <= paddle.ycor() + PADDLE_RANGE):
-            self.angle = 180 - self.angle
-            self.ball_set_angle(self.angle)
+        if cx > 0:
+            if cx >= WINDOW_WIDTH * 0.5 - PADDLE_OFFSET and (cy >= paddle.ycor() - PADDLE_RANGE and cy <= paddle.ycor() + PADDLE_RANGE):
+                self.angle = 180 - self.angle
+                self.ball_set_angle(self.angle)
     
     def is_out_of_bounds(self, scoreboard_left: Scoreboard, scoreboard_right: Scoreboard):
         cx = self.xcor()
