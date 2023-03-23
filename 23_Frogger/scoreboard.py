@@ -17,11 +17,12 @@ class Scoreboard(Turtle):
         
         self.draw_scoreboard()
         
-    
+    # Draws the scoreboard
     def draw_scoreboard(self):
         self.clear()
         self.write(arg = f"Level: {self.score + 1}", move = False, align = "center", font = FONT)
     
+    # Adds one to score. This can only be triggered by reaching the "end" in every level
     def add_score(self):
         self.score += 1
         self.draw_scoreboard()

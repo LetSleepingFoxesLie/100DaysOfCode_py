@@ -7,16 +7,15 @@ MOVE_INCREMENT = 4
 
 WINDOW_HEIGHT = 600
 WINDOW_WIDTH = 600
-SPAWNABLE_AREA_DIFFERENCE = 80
+SPAWNABLE_AREA_DIFFERENCE = 60
 
 class CarManager:
     
     def __init__(self):
-        
         self.car_list = list()
         
-        
-    def generate_car(self) -> None:
+    # Generates a car
+    def generate_car(self, level: int) -> None:
         
         car = Turtle()
         
@@ -28,20 +27,39 @@ class CarManager:
         car.speed(0)
         
         # Car settings (mechanics)
-        car.setheading(180)
-        car.setpos(360, randint(
-            - WINDOW_HEIGHT / 2 + SPAWNABLE_AREA_DIFFERENCE,
-            WINDOW_HEIGHT / 2 - SPAWNABLE_AREA_DIFFERENCE)
-        )
+        # Adding some randomness to the speed
+        if level >= 3:
+            car.speed = randint(int(3 + 0.334 * level), 4 + level)
+        elif level == 2:
+            car.speed = randint(4, 5)
+        else:
+            car.speed = 4
+        
+        # Adding some randomness!
+        if level >= 3 and randint(0, max(4, 10 - level)) == 0:
+            car.setheading(0)
+            car.setpos(-360, randint(-11, 12) * 20) # This snippet ensures the end result is a multiple of 20.
+        else:
+            car.setheading(180)
+            car.setpos(360, randint(-11, 12) * 20) # It just feels right to do so!
         
         self.car_list.append(car)
-        
+    
+    # For every frame, we will have to process the movement of each car.
+    # This is the function responsible for taking on this task.
     def process_car_movement(self, level: int) -> None:
+        
+        # The thing actually processing the cars' movements
         for car in self.car_list:
-            car.setx(car.xcor() - (MOVE_INCREMENT + level))
+            if car.heading() == 180:
+                car.setx(car.xcor() - car.speed)
+            else:
+                car.setx(car.xcor() + car.speed)
 
-            # Detect when out of bounds
-            if car.xcor() >= 360 or car.xcor() <= -360:
+            # For each car, detect when out of bounds.
+            # Using abs() saves me from writing two conditions.
+            # I hope this helps with performance.
+            if abs(car.xcor()) >= 370:
                 car.clear()
                 car.hideturtle()
                 self.car_list.remove(car)
