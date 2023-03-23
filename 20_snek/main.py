@@ -43,8 +43,11 @@ def main():
         # Checks for "game over" conditions
         if is_snek_out_of_bounds(snek) or has_snek_collided_with_tail(snek):
             #print("You died!")
-            scoreboard.game_over()
-            is_game_on = False
+            # scoreboard.game_over()
+            # is_game_on = False
+            scoreboard.reset_game()
+            snek.reset_snek()
+            sleep(1)
             
         sleep(0.1)
         

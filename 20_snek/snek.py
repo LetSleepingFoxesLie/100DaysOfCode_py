@@ -25,6 +25,15 @@ class Snek:
         
         return s
     
+    def reset_snek(self):
+        
+        for t in self.segments_list:
+            t.hideturtle()
+        
+        self.segments_list.clear()
+        self.segments_list = self.initialize_body()
+        self.head = self.segments_list[0]
+    
     # Generates a body segment... except this toesn't work very well for anything other than generating the starting ones
     def generate_body_segment(self) -> Turtle:
         segment = Turtle("square")
