@@ -21,6 +21,10 @@ def main():
     # Setting up the player
     player = Player()
     
+    # Setting up the scoreboard
+    scoreboard = Scoreboard()
+    scoreboard.draw_scoreboard()
+    
     # Listening for events
     screen.listen()
     screen.onkey(fun = player.move_backward, key = "s")
