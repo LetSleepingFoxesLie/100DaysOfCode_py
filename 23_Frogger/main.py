@@ -1,4 +1,6 @@
 import time
+from random import randint
+
 from turtle import Screen
 from player import Player
 from car_manager import CarManager
@@ -17,6 +19,7 @@ def main():
     
     # Setting up the car movements
     car_manager = CarManager()
+    car_manager.generate_car()
 
     # Setting up the player
     player = Player()
@@ -32,13 +35,18 @@ def main():
     
     while True:
         time.sleep(0.016)
-        car_manager.generate_car()
-        car_manager.process_car_movement()
+        if randint(0, 10) == 0:
+            car_manager.generate_car()
+        car_manager.process_car_movement(level = scoreboard.score)
         screen.update()
         
-        # Lastly, check for collisions
+        # Check for collisions
         if player.has_been_hit(car_manager.car_list):
             break
+        
+        # Check for level advancement
+        if player.is_player_next_level(scoreboard, car_manager):
+            print("A")
     
     screen.exitonclick()
     

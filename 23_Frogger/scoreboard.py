@@ -20,7 +20,8 @@ class Scoreboard(Turtle):
     
     def draw_scoreboard(self):
         self.clear()
-        self.write(arg = f"Level: {self.score}", move = False, align = "center", font = FONT)
+        self.write(arg = f"Level: {self.score + 1}", move = False, align = "center", font = FONT)
     
     def add_score(self):
         self.score += 1
+        self.draw_scoreboard()

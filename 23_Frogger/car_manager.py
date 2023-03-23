@@ -1,9 +1,9 @@
 from turtle import Turtle
 from random import choice, randint
 
-COLORS = ["red", "orange", "yellow", "green", "blue", "purple"]
+COLORS = ["firebrick", "sienna", "goldenrod", "green", "steel blue", "dark slate blue"]
 STARTING_MOVE_DISTANCE = 5
-MOVE_INCREMENT = 10
+MOVE_INCREMENT = 4
 
 WINDOW_HEIGHT = 600
 WINDOW_WIDTH = 600
@@ -28,7 +28,6 @@ class CarManager:
         car.speed(0)
         
         # Car settings (mechanics)
-        car.speed = -MOVE_INCREMENT
         car.setheading(180)
         car.setpos(360, randint(
             - WINDOW_HEIGHT / 2 + SPAWNABLE_AREA_DIFFERENCE,
@@ -37,9 +36,9 @@ class CarManager:
         
         self.car_list.append(car)
         
-    def process_car_movement(self) -> None:
+    def process_car_movement(self, level: int) -> None:
         for car in self.car_list:
-            car.setx(car.xcor() + car.speed)
+            car.setx(car.xcor() - (MOVE_INCREMENT + level))
 
             # Detect when out of bounds
             if car.xcor() >= 360 or car.xcor() <= -360:
