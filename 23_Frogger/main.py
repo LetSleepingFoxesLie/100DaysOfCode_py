@@ -26,12 +26,15 @@ def main():
     screen.onkey(fun = player.move_backward, key = "s")
     screen.onkey(fun = player.move_forward, key = "w")
     
-    game_is_on = True
-    while game_is_on:
+    while True:
         time.sleep(0.016)
         car_manager.generate_car()
         car_manager.process_car_movement()
         screen.update()
+        
+        # Lastly, check for collisions
+        if player.has_been_hit(car_manager.car_list):
+            break
     
     screen.exitonclick()
     
