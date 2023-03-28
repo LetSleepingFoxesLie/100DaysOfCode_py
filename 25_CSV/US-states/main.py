@@ -46,10 +46,17 @@ def main():
     screen.mainloop()
 
 def generate_csv_with_other_answers(correct_guesses: list, all_states: list):
-    with open(r"25_CSV\US-states\other_states.csv", "w") as f:
-        for state in all_states:
-            if state not in correct_guesses:
-                f.write(f"{state.title()}\n")
+    
+    # Holy shit
+    other_states = [state for state in all_states if state not in correct_guesses]
+    
+    # for state in all_states:
+    #     if state not in correct_guesses:
+    #         other_states.append(state)
+
+            
+    data = pd.DataFrame(data = other_states)
+    data.to_csv("25_CSV\US-states\other_states.csv")
 
 def get_states() -> pd.DataFrame:
     data = pd.read_csv(r"25_CSV\US-states\50_states.csv")
