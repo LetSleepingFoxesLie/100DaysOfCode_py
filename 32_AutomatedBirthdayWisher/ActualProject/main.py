@@ -1,7 +1,7 @@
 import smtplib
 import datetime as dt
 import pandas as pd
-from random import choice
+from random import choice, randint
 from LSFL_account import LSFL_Account
 
 # Setting up everything
@@ -19,16 +19,54 @@ sender_account = LSFL_Account(r"32_AutomatedBirthdayWisher\ActualProject\data.ls
 
 # CSV reader, except the .csv is actually a .lsfl
 
-def read_data():
+def read_data() -> dict:
     try:
         with open(r"32_AutomatedBirthdayWisher\ActualProject\birthdays.lsfl", "r") as f:
             data = pd.read_csv(f).to_dict(orient = "records")
-            for entry in data:
-                name = entry["name"]
-                email = entry["email"]
-                
-                print(f"{name} + {email}")
+            print(data)
+            return data
     except FileNotFoundError:
         print("Fuck!")
+
+def replace_name(lines: list, name: str) -> str:
+    s = str()
+    for line in lines:
+        if "[NAME]" in line:
+            s += line.replace("[NAME]", name)
+        else:
+            s += line
+    return s
+
+def check_birthdays(data: dict) -> list:
+    birthdays = list()
+    today = dt.datetime.now()
+    try:
+        for person in data:
+            if today.day == person["day"] and today.month == person["month"]:
+                birthday_message = f"32_AutomatedBirthdayWisher\ActualProject\letter_templates\letter_{randint(1, 3)}.txt"
+                s = list()
+                with open(birthday_message, "r", encoding = "utf-8") as f:
+                    s = f.readlines()
+                formatted_message = replace_name(s, person["name"])
+                send_email(sender_account, person["email"], formatted_message)
+    except KeyError:
+        print("No birthdays!")
+    
+    return birthdays
         
-read_data()
+
+def send_email(sender: LSFL_Account, receiver: str, message: str):
+    with smtplib.SMTP(GMAIL_SMTP, port = 587) as connection:
+        print("Sending email...")
+        connection.starttls()
+        connection.login(
+            user = sender.username,
+            password = sender.password
+        )
+        connection.sendmail(
+            from_addr = sender.username,
+            to_addrs = receiver,
+            msg = ("Subject:Happy birthday!\n\n" + message).encode("utf-8")
+        )
+
+check_birthdays(read_data())
