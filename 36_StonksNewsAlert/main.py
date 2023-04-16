@@ -1,8 +1,12 @@
-STOCK = "TSLA"
-COMPANY_NAME = "Tesla Inc"
+STOCK = "MSFT"
+COMPANY_NAME = "Microsoft"
+THRESHOLD = 0.2 # Should be 5, but I'm just testing it out
 
 from api_reader import API_Reader
+from email_account import Email_Account
+
 import requests as rq
+import smtplib
 from datetime import datetime, timedelta
 
 ## STEP 1: Use https://www.alphavantage.co
@@ -13,7 +17,6 @@ from datetime import datetime, timedelta
 
 ## STEP 3: Use https://www.twilio.com
 # Send a seperate message with the percentage change and each article's title and description to your phone number. 
-
 
 #Optional: Format the SMS message like this: 
 """
@@ -27,11 +30,18 @@ Brief: We at Insider Monkey have gone over 821 13F filings that hedge funds and 
 """
 
 def main():
-    # print(get_stock_price())
     data = get_stock_price()
-    analyse_last_two_days(data)
-    pass
+    percentage = analyse_last_two_days(data)
+    
+    if abs(percentage) >= THRESHOLD:
+        print("Difference is over the selected threshold!")
+        article_list = get_news()
+        receiver = Email_Account(r"36_StonksNewsAlert\e_receiver.lsfl")
+        send_email(receiver, article_list, percentage)
+    else:
+        print("Difference is below the selected threshold! Exiting program...")
 
+# Literally gets the prices of relevant stocks
 def get_stock_price() -> dict:
     endpoint = "https://www.alphavantage.co/query"
     
@@ -45,6 +55,7 @@ def get_stock_price() -> dict:
     }
     
     response = rq.get(url = endpoint, params = parameters)
+    print("Fetching stonk prices...")
     return response.json()
 
 def analyse_last_two_days(data: dict):
@@ -58,19 +69,16 @@ def analyse_last_two_days(data: dict):
     close_yesterday = float(data["Time Series (Daily)"][str_closest_day]["4. close"])
     close_before_yesterday = float(data["Time Series (Daily)"][str_day_before]["4. close"])
     
+    print("Analysing differences from the last two days...")
+    
     # Now analyse and see whether there was a big enough difference (in %)
-    THRESHOLD = 5.0 # In float
-    
-    # print(close_yesterday)
-    # print(close_before_yesterday)
-    
-    print(get_percentage_change(
+    return get_percentage_change(
         starting = close_before_yesterday,
         final = close_yesterday
-        ))
-    print("Get news!")
-    pass
+        )
 
+# Parsing and working with different datetime structures and Python strings
+# This is the part that took me over an hour, everything else was somewhat a breeze
 def get_last_refreshed(data: dict) -> datetime:
     day_string = data["Meta Data"]["3. Last Refreshed"]
     return datetime.strptime(day_string, "%Y-%m-%d")
@@ -82,6 +90,76 @@ def get_yesterday(day: datetime) -> str:
 # y stands for "yesterday", by stands for "before yesterday"
 def get_percentage_change(starting: float, final: float) -> float:
     return 100 * ((final - starting) / starting)
+
+# -----------------------------------------------
+# Step 2: getting the news
+
+# 2-step function: let's get the news and already clean them up for convenience and conciseness
+def get_news() -> list:
+    endpoint = "https://newsapi.org/v2/everything"
+    
+    a = API_Reader("newsapi.lsfl")
+    
+    parameters = {
+        "language": "en",
+        "apiKey": a.key,
+        "q": COMPANY_NAME,
+        "sortBy": "publishedAt" # Default value, but putting it in here anyway
+    }
+    
+    response = rq.get(url = endpoint, params = parameters)
+    response.raise_for_status()
+    response = response.json()
+    
+    print("Fetching latest news...")
+    
+    # Actually fetching the latest three articles:
+    article_list = list()
+    for article in response["articles"][:3]:
+        article_list.append(article)
+
+    return article_list
+
+# -----------------------------------------------
+# Step 3: sending the email
+
+def send_email(receiver: str, article_list: list, percentage_change: float) -> None:
+    GMAIL_SMTP = "smtp.gmail.com"
+    sender = Email_Account(r"36_StonksNewsAlert\e_sender.lsfl")
+    
+    # Generate message string
+    message_string: str
+    
+    if percentage_change >= THRESHOLD:
+        message_string = f"Subject:[StonksNewsAlert] {STOCK} is stonking by {percentage_change:.2f}%! 📈🚀\n\n"
+    else:
+        message_string = f"Subject:[StonksNewsAlert] {STOCK} is stinking by {percentage_change:.2f}%! 📉\n\n"
+    
+    message_string += f"Stay up to date with the LATEST news for {STOCK}!\n\n"
+    
+    for article in article_list:
+        message_string += f"Title: \"{article['title']}\"\n"
+        message_string += f"Description: \"{article['description']}\"\n"
+        message_string += f"Read more: \"{article['url']}\"\n\n"
+
+    print("Sending email...")
+    
+    # Actually sending the email
+    with smtplib.SMTP(GMAIL_SMTP, port = 587) as connection:
+        connection.starttls()
+        
+        connection.login(
+            user = sender.username,
+            password = sender.password
+        )
+        
+        connection.sendmail(
+            from_addr = sender.username,
+            to_addrs = receiver.username,
+            msg = message_string.encode("utf-8")
+        )
+    
+    print("Email sent!")
 
 if __name__ == "__main__":
     main()
