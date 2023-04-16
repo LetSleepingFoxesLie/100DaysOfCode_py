@@ -1,0 +1,36 @@
+import requests
+from api_reader import API_Reader
+
+def main():
+    data = get_owm_data()
+    will_it_rain_in_12_hours(data)
+    
+
+def get_owm_data():
+    owm_api = API_Reader()
+    owm_endpoint = "https://api.openweathermap.org/data/2.8/onecall"
+    
+    # Was raining at:
+        # "lat": -22.1206,
+        # "lon": -51.3874,
+    
+    owm_parameters = {
+        "lat": -22.1206,
+        "lon": -51.3874,
+        "appid": owm_api.key
+    }
+    
+    response = requests.get(owm_endpoint, owm_parameters)
+    response.raise_for_status()
+    # print(response.status_code)
+    return response.json()
+
+def will_it_rain_in_12_hours(data: dict) -> bool:
+    for day in data["hourly"][:12]:
+        if 500 <= day["weather"][0]["id"] <= 531:
+            print("Bring an umbrella, ella, ella, ella, eh, eh")
+            return True
+    return False
+    
+if __name__ == "__main__":
+    main()
