@@ -1,5 +1,5 @@
-STOCK = "MSFT"
-COMPANY_NAME = "Microsoft"
+STOCK = "TSLA"
+COMPANY_NAME = "Tesla Inc"
 THRESHOLD = 0.2 # Should be 5, but I'm just testing it out
 
 from api_reader import API_Reader
@@ -63,11 +63,17 @@ def analyse_last_two_days(data: dict):
     # Fetch strings that will be used as keys
     dt_closest_day = get_last_refreshed(data)
     str_closest_day = dt_closest_day.strftime("%Y-%m-%d")
-    str_day_before = get_yesterday(dt_closest_day)
-    
+    while True:
+        try:
+            str_day_before = get_yesterday(dt_closest_day)
+            close_before_yesterday = float(data["Time Series (Daily)"][str_day_before]["4. close"])
+            break
+        except KeyError:
+            continue
+        
     # Fetch the information within said keys -- specifically their closing values
     close_yesterday = float(data["Time Series (Daily)"][str_closest_day]["4. close"])
-    close_before_yesterday = float(data["Time Series (Daily)"][str_day_before]["4. close"])
+    
     
     print("Analysing differences from the last two days...")
     
