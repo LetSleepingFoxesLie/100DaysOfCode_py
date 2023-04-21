@@ -5,3 +5,7 @@ class Api_Reader:
         with open(r"38_WorkoutTracker\nutritionix.lsfl", "r") as f:
             self.nutritionix_id = f.readline().strip("\n")
             self.nutritionix_key = f.readline().strip("\n")
+        
+        # Read Sheety endpoint
+        with open(r"38_WorkoutTracker\sheety.lsfl", "r") as f:
+            self.sheety_endpoint = f.readline().strip("\n")
