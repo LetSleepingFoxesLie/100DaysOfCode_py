@@ -48,7 +48,8 @@ class FlightSearch:
             "date_to": dt.strftime(max_search_range, "%d/%m/%Y"),
             "nights_in_dst_from": 7,
             "nights_in_dst_to": 28,
-            "curr": "GBP"
+            "curr": "GBP",
+            "max_stopovers": 0
         }
         
         response = rq.get(

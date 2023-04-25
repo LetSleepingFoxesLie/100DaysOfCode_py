@@ -9,6 +9,10 @@ class Keyholder:
         # 2. Tequila
         with open(self.return_relative_path("api_tequila"), "r") as f:
             self.tequila_key = f.readline().strip("\n")
+        
+        # 3. Telegram instead of Twilio... because I'm a rebel
+        with open(self.return_relative_path("api_telegram"), "r") as f:
+            self.telegram_token = f.readline().strip("\n")
     
     
     def return_relative_path(self, file_name: str) -> str:
