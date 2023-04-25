@@ -5,7 +5,10 @@ class Keyholder:
         # 1. Sheety
         with open(self.return_relative_path("api_sheety"), "r") as f:
             self.sheety_endpoint = f.readline().strip("\n")
-            print(self.sheety_endpoint)
+            
+        # 2. Tequila
+        with open(self.return_relative_path("api_tequila"), "r") as f:
+            self.tequila_key = f.readline().strip("\n")
     
     
     def return_relative_path(self, file_name: str) -> str:
