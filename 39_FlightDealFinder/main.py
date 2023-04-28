@@ -21,12 +21,16 @@ def main():
     # Gets the data from our spreadsheet through Sheety
     sheet_data = data_manager.get_sheety_data()
     
-    # Let's register the user right now!
-    # Will be kept disabled until I need to do it again.
+    # Register procedure, adding it as a function for clarity
     user_manager.register_user()
+        
+    # Now let's send it through Sheety to our spreadsheet
+    user_manager.add_user_to_spreadsheet()
     
     # Flight list! Initializing it for later purposes
     f = list()
+    
+    # Search flightsd 
     
     # Now let's fetch good flight deals
     for city in sheet_data:
@@ -35,10 +39,13 @@ def main():
         found = False
         
         # Search for each flight
-        for flight in flights["data"]:
-            if flight["price"] <= city["lowestPrice"]:
-                found = True
-                f.append(flight)
+        try:
+            for flight in flights["data"]:
+                if flight["price"] <= city["lowestPrice"]:
+                    found = True
+                    f.append(flight)
+        except KeyError:
+            continue
                 
         if found:
             print(f"Found good flights for {city['city']}!")
@@ -53,45 +60,56 @@ def main():
         print("Found no flights! :(")
         
 
+# Rewriting to get all emails from out spreadsheet
 def write_message(flights: list):
     GMAIL_SMTP = "smtp.gmail.com"
 
     sender = EmailAccount("39_FlightDealFinder\e_sender.lsfl")
-    receiver = EmailAccount("39_FlightDealFinder\e_receiver.lsfl")
+    receiver_list = user_manager.get_emails()
     
-    # Generate message string:
-    message = "Subject:[FlightDealFinder] I found cheap flights just for you!\n\n"
-    
-    i = 1
-    # For each flight... add relevant information
-    for flight in flights:
+    # Send an email for each individual in our list
+    for user in receiver_list:
         
-        outbound = flight["route"][0]["local_departure"].split("T")[0]
-        inbound = flight["route"][1]["local_departure"].split("T")[0]
-    
-        message += f"Flight #{i}: £{flight['price']}\n"
-        message += f"> {flight['cityFrom']}/{flight['flyFrom']} to {flight['cityTo']}/{flight['flyTo']}\n"
-        message += f"> From {outbound} to {inbound}\n\n"
-        # message += f"> Book the flight here: {flight['deep_link']}\n\n"
-        # ^ Adds too many lines :(
-        i += 1
+        print(f"Composing an email for {user['email']}...")
         
-    # Actually send the email
-    with smtplib.SMTP(GMAIL_SMTP, port = 587) as connection:
-        connection.starttls()
+        # Generate message string:
+        message_header = f"Subject:[FlightDealFinder] I found cheap flights just for you, {user['firstName']}!\n\n"
+        message_header += f"Hello, {user['firstName']} {user['lastName']}! Look at our selection of cheap flights: \n\n"
+        message_body = str()
+        i = 1
         
-        connection.login(
-            user = sender.username,
-            password = sender.password
-        )
-    
-        connection.sendmail(
-            from_addr = sender.username,
-            to_addrs = receiver.username,
-            msg = message.encode("utf-8")
-        )
-    
-    
+        # For each flight... add relevant information
+        for flight in flights:
+            
+            outbound = flight["route"][0]["local_departure"].split("T")[0]
+            inbound = flight["route"][1]["local_departure"].split("T")[0]
+        
+            message_body += f"Flight #{i}: £{flight['price']}\n"
+            message_body += f"> {flight['cityFrom']}/{flight['flyFrom']} to {flight['cityTo']}/{flight['flyTo']}\n"
+            message_body += f"> From {outbound} to {inbound}\n\n"
+            # message += f"> Book the flight here: {flight['deep_link']}\n\n"
+            # ^ Adds too many lines :(
+            i += 1
+        
+        message = message_header + message_body
+        
+        # Actually send the email
+        with smtplib.SMTP(GMAIL_SMTP, port = 587) as connection:
+            connection.starttls()
+            
+            connection.login(
+                user = sender.username,
+                password = sender.password
+            )
+        
+            connection.sendmail(
+                from_addr = sender.username,
+                to_addrs = user["email"],
+                msg = message.encode("utf-8")
+            )
+
+            print(f"Email sent to {user['email']}!")
+        
 
 if __name__ == "__main__":
     main()

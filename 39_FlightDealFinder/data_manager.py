@@ -40,13 +40,6 @@ class UserManager:
         # Saving the endpoint to a class attribute
         self.sheety_endpoint = sheety_endpoint
         
-        # Register procedure, adding it as a function for clarity
-        self.register_user()
-        
-        # Now let's send it through Sheety to our spreadsheet
-        self.add_user_to_spreadsheet()
-        
-        
     def register_user(self):
         """
         Registers a new user.
@@ -96,4 +89,27 @@ class UserManager:
             print(f"{self.first_name} {self.last_name} ({self.email}) was added to the list!")
         except rq.exceptions.HTTPError as e:
             print("Something went wrong! Try another time...")
+            raise e
+        
+    def get_emails(self) -> list:
+        """Gets the list of emails from our spreadsheet through Sheety.
+
+        Returns:
+            list: List of emails
+        """
+        
+        headers = {
+            "Content-Type": "application/json"
+        }
+        
+        try:
+            response = rq.get(
+                url = self.sheety_endpoint,
+                headers = headers
+            )
+        
+            response.raise_for_status()
+            return [user for user in response.json()["users"]]
+        except rq.exceptions.HTTPError as e:
+            print("Fetch went wrong!")
             raise e
