@@ -1,13 +1,14 @@
 #This file will need to use the DataManager,FlightSearch, FlightData, NotificationManager classes to achieve the program requirements.
 
 from keyholder import Keyholder
-from data_manager import DataManager
-from flight_data import FlightData
+from data_manager import DataManager, UserManager
+from flight_data import FlightData # Ended up not using it.
 from flight_search import FlightSearch
 from email_account import EmailAccount
 
 keyholder = Keyholder()
 data_manager = DataManager(keyholder.sheety_endpoint)
+user_manager = UserManager(keyholder.sheety_endpoint_users)
 flight_search = FlightSearch()
 
 import requests as rq
@@ -16,14 +17,20 @@ from datetime import datetime as dt
 import smtplib
 
 def main():
+    
+    # Gets the data from our spreadsheet through Sheety
     sheet_data = data_manager.get_sheety_data()
     
-    # Flight list!
+    # Let's register the user right now!
+    # Will be kept disabled until I need to do it again.
+    user_manager.register_user()
+    
+    # Flight list! Initializing it for later purposes
     f = list()
     
+    # Now let's fetch good flight deals
     for city in sheet_data:
-        # city = flight_search.get_IATA_code(city, keyholder.tequila_key)
-        # data_manager.update_city_data(city["iataCode"], city["id"])
+        
         flights = flight_search.search_flights(city["iataCode"], keyholder.tequila_key)
         found = False
         
@@ -32,14 +39,13 @@ def main():
             if flight["price"] <= city["lowestPrice"]:
                 found = True
                 f.append(flight)
-                # print("Found cheaper flight! Use write_message() passing 'flight' as a parameter.")
-#                print(f">> {flight['price']}")
-
+                
         if found:
             print(f"Found good flights for {city['city']}!")
         else:
             print(f"Found no flights for {city['city']} priced lower than £{city['lowestPrice']}!")
 
+    # If the list of found flights is NOT empty, write an email with all cheap flights.
     if len(f) > 0:
         print("Writing an email! :)")
         write_message(f)
