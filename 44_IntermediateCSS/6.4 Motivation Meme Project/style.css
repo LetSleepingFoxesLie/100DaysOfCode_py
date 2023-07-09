@@ -1,0 +1,58 @@
+.baskerville {
+    font-family: 'Libre Baskerville', serif;
+}
+
+body {
+    color: white;
+    background-color: black;
+}
+
+.motivational-meme {
+    margin: 1% 25%;
+    max-width: 50%;
+    height: auto;
+    text-align: center;
+}
+
+.fox-emoji {
+    margin: 0px 45%;
+}
+
+.meme {
+    border: 5px solid white;
+}
+
+h1 {
+    text-transform: uppercase;
+}
+
+img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+.meme:hover {
+    border: 5px solid gray;
+    width: 100%;
+}
+
+.fox {
+    max-width: 100%;
+    height: auto;
+    display: inline-block;
+    position: relative;
+}
+
+#fox-happy {
+    display: inline;
+    position: absolute;
+    width: 10%;
+    top: 76%;
+    left: 45%;
+    z-index: 99;
+}
+
+#fox-happy:active {
+    display: none;
+}
